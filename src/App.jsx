@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import Portfolio from "./pages/Portfolio";
 import AdminPanel from "./pages/AdminPanel";
-import { loadData } from "./utils/storage";
+import { fetchPortfolioData } from "./utils/supabaseService";
 
 export default function App() {
   const [page, setPage] = useState("portfolio");
-  const [data, setData] = useState(loadData);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(() => {
     try {
       const saved = localStorage.getItem("theme");
@@ -13,6 +14,21 @@ export default function App() {
     } catch {}
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
+
+  // Load portfolio data on mount
+  useEffect(() => {
+    async function load() {
+      try {
+        const dbData = await fetchPortfolioData();
+        setData(dbData);
+      } catch (err) {
+        console.error("Gagal memuat data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
   // Track system preference theme changes
   useEffect(() => {
@@ -42,6 +58,24 @@ export default function App() {
 
   const toggleTheme = () => setIsDark((d) => !d);
 
+  if (loading) {
+    return (
+      <div className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${
+        isDark ? "bg-[#111210] text-[#f0ede8]" : "bg-[#f8f7f4] text-[#1a1916]"
+      }`}>
+        <div className="relative flex items-center justify-center w-16 h-16">
+          <div className="absolute w-12 h-12 rounded-full border-2 border-brand/20 dark:border-brand-dark/20 animate-spin border-t-brand dark:border-t-brand-dark" />
+          <span className="font-serif text-[10px] tracking-widest font-semibold text-brand dark:text-brand-dark uppercase">
+            GTN
+          </span>
+        </div>
+        <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-customText-mutedLight dark:text-customText-mutedDark animate-pulse">
+          Memuat Data...
+        </p>
+      </div>
+    );
+  }
+
   if (page === "admin") {
     return (
       <AdminPanel
@@ -63,3 +97,4 @@ export default function App() {
     />
   );
 }
+

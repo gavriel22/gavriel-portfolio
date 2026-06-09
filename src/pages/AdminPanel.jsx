@@ -5,7 +5,7 @@ import AdminSkills from "../components/admin/AdminSkills";
 import AdminList from "../components/admin/AdminList";
 import AdminDocs from "../components/admin/AdminDocs";
 import AdminContact from "../components/admin/AdminContact";
-import { saveData } from "../utils/storage";
+import { updatePortfolioDataSecure } from "../utils/supabaseService";
 
 const ADMIN_PASSWORD = "gavriel2025";
 
@@ -18,13 +18,19 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
 
   const showToast = (msg) => {
     setToast(msg);
-    setTimeout(() => setToast(null), 2500);
+    setTimeout(() => setToast(null), 3000);
   };
 
-  const save = (newData) => {
-    setData(newData);
-    saveData(newData);
-    showToast("✓ Tersimpan");
+  const save = async (newData) => {
+    try {
+      showToast("⏳ Menyimpan ke database...");
+      await updatePortfolioDataSecure(pw, newData);
+      setData(newData);
+      showToast("✓ Berhasil disimpan");
+    } catch (err) {
+      console.error("Gagal menyimpan data:", err);
+      showToast(`❌ Gagal: ${err.message || "Terjadi kesalahan"}`);
+    }
   };
 
   if (!authed) {
