@@ -1,4 +1,6 @@
-export function Contact({ contact, location, isDark }) {
+import { getTranslation } from "../../utils/translations";
+
+export function Contact({ contact, location, isDark, lang }) {
   const socialLinks = [
     {
       icon: "✉️",
@@ -28,15 +30,20 @@ export function Contact({ contact, location, isDark }) {
           {/* Main Social Section */}
           <div className="flex-1 reveal">
             <p className="text-xs tracking-[0.14em] uppercase mb-3 text-brand dark:text-[#7ab84a] font-medium">
-              Kontak
+              {getTranslation(lang, "contact", "title")}
             </p>
             <h2 className="font-serif text-[clamp(1.5rem,3vw,2.5rem)] tracking-tight leading-tight mb-6 text-customText-light dark:text-customText-dark">
-              Mari <em className="text-brand dark:text-[#7ab84a] not-italic">terhubung</em>
+              {getTranslation(lang, "contact", "subtitle").split(" ").slice(0, 2).join(" ")}{" "}
+              <em className="text-brand dark:text-[#7ab84a] not-italic">
+                {getTranslation(lang, "contact", "subtitle").split(" ").slice(2, 3)[0]}
+              </em>
               <br />
-              dan berkolaborasi
+              {getTranslation(lang, "contact", "subtitle").split(" ").slice(3).join(" ")}
             </h2>
             <p className="text-sm leading-relaxed mb-8 font-light text-customText-mutedLight dark:text-customText-mutedDark">
-              Saya terbuka untuk diskusi proyek, kolaborasi, maupun sekadar ngobrol tentang teknologi.
+              {lang === "en"
+                ? "I am open to project discussions, collaborations, or simply chatting about tech."
+                : "Saya terbuka untuk diskusi proyek, kolaborasi, maupun sekadar ngobrol tentang teknologi."}
             </p>
             
             <div className="space-y-3">
@@ -68,7 +75,7 @@ export function Contact({ contact, location, isDark }) {
           <div className="lg:w-72 reveal">
             <div className="p-6 rounded-2xl border border-black/8 bg-white dark:border-white/8 dark:bg-customBg-darkCard transition-all hover:shadow-sm">
               <p className="text-xs tracking-widest uppercase mb-4 text-customText-subLight dark:text-customText-subDark font-semibold">
-                Status Kerja
+                {getTranslation(lang, "contact", "statusLabel")}
               </p>
               
               <div className="flex items-center gap-2 mb-4">
@@ -84,7 +91,7 @@ export function Contact({ contact, location, isDark }) {
               
               <div className="pt-4 border-t border-black/8 dark:border-white/8">
                 <p className="text-xs uppercase tracking-widest mb-2 text-customText-subLight dark:text-customText-subDark font-semibold">
-                  Lokasi
+                  {lang === "en" ? "Location" : "Lokasi"}
                 </p>
                 <p className="text-sm text-customText-mutedLight dark:text-customText-mutedDark font-medium">
                   {location} 🇮🇩

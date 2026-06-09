@@ -1,10 +1,12 @@
-export function Projects({ projects, isDark }) {
+import { getTranslation } from "../../utils/translations";
+
+export function Projects({ projects, isDark, lang }) {
   if (!projects || projects.length === 0) {
     return (
       <section id="projects" className="py-28 px-6 md:px-8">
         <div className="max-w-[1100px] mx-auto text-center py-16">
-          <p className="text-customText-mutedLight dark:text-customText-mutedDark">
-            Belum ada proyek yang ditambahkan.
+          <p className="text-customText-mutedLight dark:text-customText-mutedDark text-xs font-medium uppercase tracking-wider">
+            {lang === "en" ? "No projects added yet." : "Belum ada proyek yang ditambahkan."}
           </p>
         </div>
       </section>
@@ -15,10 +17,13 @@ export function Projects({ projects, isDark }) {
     <section id="projects" className="py-28 px-6 md:px-8">
       <div className="max-w-[1100px] mx-auto">
         <p className="reveal text-xs tracking-[0.14em] uppercase mb-3 text-brand dark:text-[#7ab84a] font-medium">
-          Proyek
+          {getTranslation(lang, "projects", "title")}
         </p>
         <h2 className="reveal font-serif text-[clamp(1.8rem,3.5vw,2.8rem)] tracking-tight mb-12 text-customText-light dark:text-customText-dark">
-          Karya yang sudah <em className="text-brand dark:text-[#7ab84a] not-italic">live</em>
+          {getTranslation(lang, "projects", "subtitle").split(" ").slice(0, -1).join(" ")}{" "}
+          <em className="text-brand dark:text-[#7ab84a] not-italic">
+            {getTranslation(lang, "projects", "subtitle").split(" ").slice(-1)[0]}
+          </em>
         </h2>
         <div className="reveal grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px rounded-2xl overflow-hidden border bg-black/8 border-black/8 dark:bg-white/8 dark:border-white/8">
           {projects.map((p, i) => (

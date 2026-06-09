@@ -7,6 +7,13 @@ export default function App() {
   const [page, setPage] = useState("portfolio");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lang, setLang] = useState(() => {
+    try {
+      const saved = localStorage.getItem("lang");
+      return saved === "en" ? "en" : "id";
+    } catch {}
+    return "id";
+  });
   const [isDark, setIsDark] = useState(() => {
     try {
       const saved = localStorage.getItem("theme");
@@ -29,6 +36,13 @@ export default function App() {
     }
     load();
   }, []);
+
+  // Sync lang state with localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("lang", lang);
+    } catch {}
+  }, [lang]);
 
   // Track system preference theme changes
   useEffect(() => {
@@ -70,7 +84,7 @@ export default function App() {
           </span>
         </div>
         <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-customText-mutedLight dark:text-customText-mutedDark animate-pulse">
-          Memuat Data...
+          {lang === "en" ? "Loading Data..." : "Memuat Data..."}
         </p>
       </div>
     );
@@ -88,9 +102,14 @@ export default function App() {
     );
   }
 
+  // Kirimkan slice data yang aktif (id atau en) ke halaman utama portofolio
+  const activeDataSlice = data?.[lang] || data?.id || data;
+
   return (
     <Portfolio
-      data={data}
+      data={activeDataSlice}
+      lang={lang}
+      setLang={setLang}
       isDark={isDark}
       toggleTheme={toggleTheme}
       goAdmin={() => setPage("admin")}

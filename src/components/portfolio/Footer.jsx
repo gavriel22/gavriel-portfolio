@@ -1,4 +1,4 @@
-export function Footer({ name }) {
+export function Footer({ name, lang }) {
   const currentYear = new Date().getFullYear();
   
   return (
@@ -7,7 +7,7 @@ export function Footer({ name }) {
         {name}
       </span>
       <span className="text-xs text-customText-subLight dark:text-customText-subDark">
-        © {currentYear} · Dibangun dengan ❤️ dan banyak ☕
+        © {currentYear} · {lang === "en" ? "Built with ❤️ and lots of ☕" : "Dibangun dengan ❤️ dan banyak ☕"}
       </span>
     </footer>
   );

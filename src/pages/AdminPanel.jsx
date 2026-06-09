@@ -15,21 +15,55 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
   const [pwErr, setPwErr] = useState(false);
   const [tab, setTab] = useState("hero");
   const [toast, setToast] = useState(null);
+  const [editLang, setEditLang] = useState("id");
 
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
   };
 
-  const save = async (newData) => {
+  // Menyimpan perubahan pada sub-bahasa tertentu (id/en) dengan sinkronisasi field global
+  const saveSlice = async (updatedSlice) => {
     try {
-      showToast("⏳ Menyimpan ke database...");
+      showToast(editLang === "en" ? "⏳ Saving changes..." : "⏳ Menyimpan ke database...");
+      
+      const otherLang = editLang === "id" ? "en" : "id";
+      
+      // Sinkronisasi data global otomatis agar tidak perlu input dua kali
+      const updatedOtherSlice = {
+        ...data[otherLang],
+        // 1. Sinkronisasi daftar keahlian (skills)
+        skills: updatedSlice.skills,
+        // 2. Sinkronisasi foto profil (avatar) di hero
+        hero: {
+          ...data[otherLang]?.hero,
+          profileImage: updatedSlice.hero?.profileImage || "",
+        },
+        // 3. Sinkronisasi galeri dokumentasi (docs)
+        docs: updatedSlice.docs || [],
+        // 4. Sinkronisasi kontak (kecuali teks status yang bisa ditranslasikan)
+        contact: {
+          ...data[otherLang]?.contact,
+          email: updatedSlice.contact?.email || "",
+          github: updatedSlice.contact?.github || "",
+          linkedin: updatedSlice.contact?.linkedin || "",
+        }
+      };
+
+      const newData = {
+        id: editLang === "id" ? updatedSlice : updatedOtherSlice,
+        en: editLang === "en" ? updatedSlice : updatedOtherSlice,
+      };
+
+      // Simpan perubahan ke database Supabase secara aman
       await updatePortfolioDataSecure(pw, newData);
+      
+      // Perbarui status lokal React
       setData(newData);
-      showToast("✓ Berhasil disimpan");
+      showToast(editLang === "en" ? "✓ Successfully saved" : "✓ Berhasil disimpan");
     } catch (err) {
       console.error("Gagal menyimpan data:", err);
-      showToast(`❌ Gagal: ${err.message || "Terjadi kesalahan"}`);
+      showToast(editLang === "en" ? `❌ Failed: ${err.message}` : `❌ Gagal: ${err.message}`);
     }
   };
 
@@ -105,6 +139,9 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
     { id: "contact", label: "Kontak" },
   ];
 
+  // Ambil data slice bahasa yang saat ini diedit (id/en)
+  const activeSliceData = data?.[editLang] || data?.id || data;
+
   return (
     <div className="min-h-screen bg-customBg-lightAccent text-customText-light dark:bg-customBg-dark dark:text-customText-dark">
       {/* Toast Alert */}
@@ -141,8 +178,46 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
         </div>
       </div>
 
+      {/* Language Editing Selector Bar */}
+      <div className="flex flex-col sm:flex-row gap-3 p-4 border-b bg-customBg-lightAccent/40 border-black/8 justify-between items-center dark:bg-customBg-darkAccent/25 dark:border-white/8">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-customText-mutedLight dark:text-customText-mutedDark">
+            ✍️ Bahasa Pengeditan:
+          </span>
+          <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-brand/10 text-brand dark:bg-brand-darkBg dark:text-brand-textDark border border-brand/10 font-bold">
+            {editLang === "id" ? "INDONESIA" : "ENGLISH"}
+          </span>
+        </div>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <button
+            type="button"
+            onClick={() => setEditLang("id")}
+            className={`flex-1 sm:flex-initial px-4 py-1.5 rounded-xl text-xs uppercase tracking-wider transition-all font-bold cursor-pointer border
+              ${
+                editLang === "id"
+                  ? "bg-brand text-white border-brand shadow-sm dark:bg-[#7ab84a] dark:text-customBg-dark dark:border-[#7ab84a]"
+                  : "bg-white border-black/10 text-customText-mutedLight hover:bg-black/5 dark:bg-customBg-darkCard dark:border-white/10 dark:text-customText-mutedDark dark:hover:bg-white/5"
+              }`}
+          >
+            🇮🇩 Indonesia
+          </button>
+          <button
+            type="button"
+            onClick={() => setEditLang("en")}
+            className={`flex-1 sm:flex-initial px-4 py-1.5 rounded-xl text-xs uppercase tracking-wider transition-all font-bold cursor-pointer border
+              ${
+                editLang === "en"
+                  ? "bg-brand text-white border-brand shadow-sm dark:bg-[#7ab84a] dark:text-customBg-dark dark:border-[#7ab84a]"
+                  : "bg-white border-black/10 text-customText-mutedLight hover:bg-black/5 dark:bg-customBg-darkCard dark:border-white/10 dark:text-customText-mutedDark dark:hover:bg-white/5"
+              }`}
+          >
+            🇬🇧 English
+          </button>
+        </div>
+      </div>
+
       {/* Admin Layout Grid */}
-      <div className="flex flex-col md:flex-row h-[calc(100vh-56px)]">
+      <div className="flex flex-col md:flex-row h-[calc(100vh-112px)]">
         {/* Sidebar Nav */}
         <div className="w-full md:w-52 shrink-0 border-r border-black/8 bg-customBg-lightAccent/50 overflow-y-auto dark:border-white/8 dark:bg-customBg-darkCard">
           <div className="p-4 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-x-visible">
@@ -166,13 +241,13 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
         {/* Content Panel */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-8 max-w-3xl">
-            {tab === "hero" && <AdminHero data={data} save={save} isDark={isDark} />}
-            {tab === "about" && <AdminAbout data={data} save={save} isDark={isDark} />}
-            {tab === "skills" && <AdminSkills data={data} save={save} isDark={isDark} />}
+            {tab === "hero" && <AdminHero data={activeSliceData} save={saveSlice} isDark={isDark} />}
+            {tab === "about" && <AdminAbout data={activeSliceData} save={saveSlice} isDark={isDark} />}
+            {tab === "skills" && <AdminSkills data={activeSliceData} save={saveSlice} isDark={isDark} />}
             {tab === "projects" && (
               <AdminList
-                data={data}
-                save={save}
+                data={activeSliceData}
+                save={saveSlice}
                 isDark={isDark}
                 section="projects"
                 fields={[
@@ -186,8 +261,8 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
             )}
             {tab === "organizations" && (
               <AdminList
-                data={data}
-                save={save}
+                data={activeSliceData}
+                save={saveSlice}
                 isDark={isDark}
                 section="organizations"
                 fields={[
@@ -201,8 +276,8 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
             )}
             {tab === "committees" && (
               <AdminList
-                data={data}
-                save={save}
+                data={activeSliceData}
+                save={saveSlice}
                 isDark={isDark}
                 section="committees"
                 fields={[
@@ -216,8 +291,8 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
             )}
             {tab === "competitions" && (
               <AdminList
-                data={data}
-                save={save}
+                data={activeSliceData}
+                save={saveSlice}
                 isDark={isDark}
                 section="competitions"
                 fields={[
@@ -229,8 +304,8 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
                 title="Kompetisi & Penghargaan"
               />
             )}
-            {tab === "docs" && <AdminDocs data={data} save={save} isDark={isDark} />}
-            {tab === "contact" && <AdminContact data={data} save={save} isDark={isDark} />}
+            {tab === "docs" && <AdminDocs data={activeSliceData} save={saveSlice} isDark={isDark} />}
+            {tab === "contact" && <AdminContact data={activeSliceData} save={saveSlice} isDark={isDark} />}
           </div>
         </div>
       </div>
@@ -239,3 +314,4 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
 }
 
 export default AdminPanel;
+

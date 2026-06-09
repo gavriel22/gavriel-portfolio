@@ -9,7 +9,7 @@ import Contact from "../components/portfolio/Contact";
 import Footer from "../components/portfolio/Footer";
 import useScrollReveal from "../hooks/useScrollReveal";
 
-export function Portfolio({ data, isDark, toggleTheme, goAdmin }) {
+export function Portfolio({ data, isDark, toggleTheme, goAdmin, lang, setLang }) {
   useScrollReveal();
 
   // Dynamically calculate statistics from the active arrays
@@ -29,10 +29,12 @@ export function Portfolio({ data, isDark, toggleTheme, goAdmin }) {
         isDark={isDark}
         toggleTheme={toggleTheme}
         goAdmin={goAdmin}
+        lang={lang}
+        setLang={setLang}
       />
 
       {/* Hero Display */}
-      <Hero hero={data.hero} about={data.about} isDark={isDark} />
+      <Hero hero={data.hero} about={data.about} isDark={isDark} lang={lang} />
 
       <div className="w-full h-px bg-black/5 dark:bg-white/5" />
 
@@ -44,17 +46,18 @@ export function Portfolio({ data, isDark, toggleTheme, goAdmin }) {
         committeesCount={committeesCount}
         awardsCount={awardsCount}
         isDark={isDark}
+        lang={lang}
       />
 
       <div className="w-full h-px bg-black/5 dark:bg-white/5" />
 
       {/* Skills Grouping Grid */}
-      <Skills skills={data.skills} isDark={isDark} />
+      <Skills skills={data.skills} isDark={isDark} lang={lang} />
 
       <div className="w-full h-px bg-black/5 dark:bg-white/5" />
 
       {/* Project Card Listing */}
-      <Projects projects={data.projects} isDark={isDark} />
+      <Projects projects={data.projects} isDark={isDark} lang={lang} />
 
       <div className="w-full h-px bg-black/5 dark:bg-white/5" />
 
@@ -64,12 +67,13 @@ export function Portfolio({ data, isDark, toggleTheme, goAdmin }) {
         committees={data.committees}
         competitions={data.competitions}
         isDark={isDark}
+        lang={lang}
       />
 
       <div className="w-full h-px bg-black/5 dark:bg-white/5" />
 
       {/* Gallery Slideshow / Grid */}
-      <Docs docs={data.docs} isDark={isDark} />
+      <Docs docs={data.docs} isDark={isDark} lang={lang} />
 
       <div className="w-full h-px bg-black/5 dark:bg-white/5" />
 
@@ -78,12 +82,13 @@ export function Portfolio({ data, isDark, toggleTheme, goAdmin }) {
         contact={data.contact}
         location={data.about.location}
         isDark={isDark}
+        lang={lang}
       />
 
       <div className="w-full h-px bg-black/5 dark:bg-white/5" />
 
       {/* Page Footer */}
-      <Footer name={data.hero.name} />
+      <Footer name={data.hero.name} lang={lang} />
       
     </div>
   );

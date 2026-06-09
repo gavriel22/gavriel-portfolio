@@ -5,7 +5,7 @@ export function AdminSkills({ data, save, isDark }) {
   const [skills, setSkills] = useState(data.skills);
   const [newSkill, setNewSkill] = useState({ name: "", logo: "", featured: false });
   const [activeGroup, setActiveGroup] = useState("frontend");
-  const groups = ["frontend", "backend", "database", "tools"];
+  const groups = ["frontend", "backend", "database", "tools", "uiux"];
 
   const removeSkill = (group, idx) => {
     setSkills((s) => ({
@@ -59,7 +59,7 @@ export function AdminSkills({ data, save, isDark }) {
                   : "text-customText-mutedLight hover:bg-black/5 dark:text-customText-mutedDark dark:hover:bg-white/5"
               }`}
           >
-            {g}
+            {g === "uiux" ? "UI/UX" : g}
           </button>
         ))}
       </div>
@@ -117,7 +117,7 @@ export function AdminSkills({ data, save, isDark }) {
       {/* Add New Skill Form */}
       <div className="p-4 rounded-xl border border-black/8 bg-white dark:border-white/8 dark:bg-customBg-darkCard mb-6">
         <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-customText-subLight dark:text-customText-subDark">
-          Tambah Skill Baru ke {activeGroup}
+          Tambah Skill Baru ke {activeGroup === "uiux" ? "UI/UX" : activeGroup}
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">

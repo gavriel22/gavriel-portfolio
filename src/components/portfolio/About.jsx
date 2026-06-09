@@ -1,19 +1,24 @@
-export function About({ about, projectsCount, organizationsCount, committeesCount, awardsCount, isDark }) {
+import { getTranslation } from "../../utils/translations";
+
+export function About({ about, projectsCount, organizationsCount, committeesCount, awardsCount, isDark, lang }) {
   const stats = [
-    [projectsCount.toString(), "Proyek live"],
-    [organizationsCount.toString(), "Organisasi"],
-    [committeesCount.toString(), "Kepanitiaan"],
-    [awardsCount.toString(), "Penghargaan"],
+    [projectsCount.toString(), getTranslation(lang, "about", "statsLiveProjects")],
+    [organizationsCount.toString(), getTranslation(lang, "about", "statsOrganizations")],
+    [committeesCount.toString(), getTranslation(lang, "about", "statsCommittees")],
+    [awardsCount.toString(), getTranslation(lang, "about", "statsAwards")],
   ];
 
   return (
     <section id="about" className="py-28 px-6 md:px-8">
       <div className="max-w-[1100px] mx-auto">
         <p className="reveal text-xs tracking-[0.14em] uppercase mb-3 text-brand dark:text-[#7ab84a] font-medium">
-          Tentang saya
+          {getTranslation(lang, "about", "title")}
         </p>
         <h2 className="reveal font-serif text-[clamp(1.8rem,3.5vw,2.8rem)] tracking-tight mb-12 text-customText-light dark:text-customText-dark">
-          Siapa <em className="text-brand dark:text-[#7ab84a] not-italic">saya?</em>
+          {getTranslation(lang, "about", "subtitle").split(" ").slice(0, -1).join(" ")}{" "}
+          <em className="text-brand dark:text-[#7ab84a] not-italic">
+            {getTranslation(lang, "about", "subtitle").split(" ").slice(-1)[0]}
+          </em>
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20">
           
@@ -52,7 +57,7 @@ export function About({ about, projectsCount, organizationsCount, committeesCoun
           <div className="reveal space-y-4">
             <div className="p-6 rounded-xl border border-black/8 bg-white dark:border-white/8 dark:bg-customBg-darkCard transition-all hover:shadow-sm">
               <p className="text-xs tracking-widest uppercase mb-4 text-customText-subLight dark:text-customText-subDark font-semibold">
-                Pendidikan
+                {getTranslation(lang, "about", "education")}
               </p>
               <div className="font-serif text-xl tracking-tight mb-1 text-customText-light dark:text-customText-dark font-semibold">
                 {about.university}
@@ -61,7 +66,7 @@ export function About({ about, projectsCount, organizationsCount, committeesCoun
                 {about.major}
               </div>
               <div className="text-xs leading-relaxed text-customText-subLight dark:text-customText-subDark">
-                Angkatan {about.batch} · Semester {about.semester}
+                {getTranslation(lang, "about", "periodLabel")} {about.batch} · {getTranslation(lang, "about", "semesterLabel")} {about.semester}
                 <br />
                 {about.location}
               </div>
@@ -69,7 +74,7 @@ export function About({ about, projectsCount, organizationsCount, committeesCoun
             
             <div className="p-6 rounded-xl border border-black/8 bg-white dark:border-white/8 dark:bg-customBg-darkCard transition-all hover:shadow-sm">
               <p className="text-xs tracking-widest uppercase mb-4 text-customText-subLight dark:text-customText-subDark font-semibold">
-                Minat & Fokus
+                {getTranslation(lang, "about", "interests")}
               </p>
               <div className="flex flex-wrap gap-2">
                 {about.interests && about.interests.map((interest, i) => (

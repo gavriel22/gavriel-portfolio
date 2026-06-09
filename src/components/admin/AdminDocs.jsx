@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { AdminSaveBtn } from "./AdminFields";
 
 export function AdminDocs({ data, save, isDark }) {
   const [docs, setDocs] = useState(data.docs || []);
@@ -68,7 +69,6 @@ export function AdminDocs({ data, save, isDark }) {
     if (compressedDocs.length > 0) {
       const updated = [...docs, ...compressedDocs];
       setDocs(updated);
-      save({ ...data, docs: updated });
     }
     
     e.target.value = "";
@@ -78,13 +78,11 @@ export function AdminDocs({ data, save, isDark }) {
   const updateCaption = (i, caption) => {
     const updated = docs.map((d, ii) => (ii === i ? { ...d, caption } : d));
     setDocs(updated);
-    save({ ...data, docs: updated });
   };
 
   const removeDoc = (i) => {
     const updated = docs.filter((_, ii) => ii !== i);
     setDocs(updated);
-    save({ ...data, docs: updated });
   };
 
   return (
@@ -115,7 +113,7 @@ export function AdminDocs({ data, save, isDark }) {
       {docs.length === 0 ? (
         <div
           onClick={() => !loading && fileRef.current.click()}
-          className={`cursor-pointer text-center py-16 rounded-2xl border-2 border-dashed transition-colors select-none
+          className={`cursor-pointer text-center py-16 rounded-2xl border-2 border-dashed mb-8 transition-colors select-none
             border-black/10 hover:border-brand/40 text-customText-subLight
             dark:border-white/10 dark:hover:border-brand-dark/40 dark:text-customText-subDark`}
         >
@@ -126,7 +124,7 @@ export function AdminDocs({ data, save, isDark }) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
           {docs.map((doc, i) => (
             <div
               key={i}
@@ -168,6 +166,8 @@ export function AdminDocs({ data, save, isDark }) {
           </div>
         </div>
       )}
+
+      <AdminSaveBtn onClick={() => save({ ...data, docs })} isDark={isDark} />
     </div>
   );
 }
