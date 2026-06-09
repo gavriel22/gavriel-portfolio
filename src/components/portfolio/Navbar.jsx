@@ -23,13 +23,12 @@ export function Navbar({ name, isDark, toggleTheme, goAdmin, lang, setLang }) {
         ))}
       </ul>
       <div className="flex items-center gap-2.5">
-        {/* Language Switcher */}
         <button
           onClick={() => setLang(lang === "id" ? "en" : "id")}
           className="px-2.5 h-8 rounded-full border flex items-center justify-center text-[10px] font-bold tracking-wider transition-all border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-customText-mutedLight dark:text-customText-mutedDark hover:text-customText-light dark:hover:text-customText-dark cursor-pointer select-none"
           title={lang === "id" ? "Switch to English" : "Ubah ke Bahasa Indonesia"}
         >
-          {lang === "id" ? "🇮🇩 ID" : "🇬🇧 EN"}
+          {lang === "id" ? "ID" : "ENG"}
         </button>
 
         {/* Theme Switcher */}

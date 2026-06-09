@@ -241,11 +241,12 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
         {/* Content Panel */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-8 max-w-3xl">
-            {tab === "hero" && <AdminHero data={activeSliceData} save={saveSlice} isDark={isDark} />}
-            {tab === "about" && <AdminAbout data={activeSliceData} save={saveSlice} isDark={isDark} />}
-            {tab === "skills" && <AdminSkills data={activeSliceData} save={saveSlice} isDark={isDark} />}
+            {tab === "hero" && <AdminHero key={`hero-${editLang}`} data={activeSliceData} save={saveSlice} isDark={isDark} />}
+            {tab === "about" && <AdminAbout key={`about-${editLang}`} data={activeSliceData} save={saveSlice} isDark={isDark} />}
+            {tab === "skills" && <AdminSkills key={`skills-${editLang}`} data={activeSliceData} save={saveSlice} isDark={isDark} />}
             {tab === "projects" && (
               <AdminList
+                key={`projects-${editLang}`}
                 data={activeSliceData}
                 save={saveSlice}
                 isDark={isDark}
@@ -261,6 +262,7 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
             )}
             {tab === "organizations" && (
               <AdminList
+                key={`organizations-${editLang}`}
                 data={activeSliceData}
                 save={saveSlice}
                 isDark={isDark}
@@ -276,6 +278,7 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
             )}
             {tab === "committees" && (
               <AdminList
+                key={`committees-${editLang}`}
                 data={activeSliceData}
                 save={saveSlice}
                 isDark={isDark}
@@ -291,6 +294,7 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
             )}
             {tab === "competitions" && (
               <AdminList
+                key={`competitions-${editLang}`}
                 data={activeSliceData}
                 save={saveSlice}
                 isDark={isDark}
@@ -304,8 +308,8 @@ export function AdminPanel({ data, setData, isDark, toggleTheme, goBack }) {
                 title="Kompetisi & Penghargaan"
               />
             )}
-            {tab === "docs" && <AdminDocs data={activeSliceData} save={saveSlice} isDark={isDark} />}
-            {tab === "contact" && <AdminContact data={activeSliceData} save={saveSlice} isDark={isDark} />}
+            {tab === "docs" && <AdminDocs key={`docs-${editLang}`} data={activeSliceData} save={saveSlice} isDark={isDark} />}
+            {tab === "contact" && <AdminContact key={`contact-${editLang}`} data={activeSliceData} save={saveSlice} isDark={isDark} />}
           </div>
         </div>
       </div>
