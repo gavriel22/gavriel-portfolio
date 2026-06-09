@@ -48,6 +48,8 @@ export function Hero({ hero, about, isDark, lang }) {
             <img
               src={hero.profileImage}
               alt={hero.name}
+              loading="eager"
+              fetchpriority="high"
               className="w-full h-full object-cover rounded-full"
             />
           </div>

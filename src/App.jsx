@@ -1,12 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import Portfolio from "./pages/Portfolio";
-import AdminPanel from "./pages/AdminPanel";
 import { fetchPortfolioData } from "./utils/supabaseService";
+import { loadData } from "./utils/storage";
+
+// Lazy load AdminPanel to split code and reduce visitor bundle size
+const AdminPanel = lazy(() => import("./pages/AdminPanel"));
 
 export default function App() {
-  const [page, setPage] = useState("portfolio");
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Native pathname routing
+  const [page, setPage] = useState(() => {
+    return window.location.pathname === "/admin" ? "admin" : "portfolio";
+  });
+
+  // Initialize data with local storage cache instantly to prevent LCP blocking
+  const [data, setData] = useState(() => loadData());
+  
   const [lang, setLang] = useState(() => {
     try {
       const saved = localStorage.getItem("lang");
@@ -14,6 +22,7 @@ export default function App() {
     } catch {}
     return "id";
   });
+  
   const [isDark, setIsDark] = useState(() => {
     try {
       const saved = localStorage.getItem("theme");
@@ -22,16 +31,29 @@ export default function App() {
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
-  // Load portfolio data on mount
+  // Routing navigation helper without page reload
+  const navigateTo = (path) => {
+    window.history.pushState(null, "", path);
+    setPage(path === "/admin" ? "admin" : "portfolio");
+  };
+
+  // Sync routing state with browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      setPage(window.location.pathname === "/admin" ? "admin" : "portfolio");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Fetch latest data from database asynchronously in the background (SWR pattern)
   useEffect(() => {
     async function load() {
       try {
         const dbData = await fetchPortfolioData();
         setData(dbData);
       } catch (err) {
-        console.error("Gagal memuat data:", err);
-      } finally {
-        setLoading(false);
+        console.error("Gagal memuat data dari Supabase:", err);
       }
     }
     load();
@@ -72,7 +94,8 @@ export default function App() {
 
   const toggleTheme = () => setIsDark((d) => !d);
 
-  if (loading) {
+  // Minimalist loader for the absolute first load when local storage cache is empty
+  if (!data) {
     return (
       <div className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${
         isDark ? "bg-[#111210] text-[#f0ede8]" : "bg-[#f8f7f4] text-[#1a1916]"
@@ -92,13 +115,23 @@ export default function App() {
 
   if (page === "admin") {
     return (
-      <AdminPanel
-        data={data}
-        setData={setData}
-        isDark={isDark}
-        toggleTheme={toggleTheme}
-        goBack={() => setPage("portfolio")}
-      />
+      <Suspense fallback={
+        <div className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${
+          isDark ? "bg-[#111210] text-[#f0ede8]" : "bg-[#f8f7f4] text-[#1a1916]"
+        }`}>
+          <p className="text-xs font-semibold uppercase tracking-widest text-customText-mutedLight dark:text-customText-mutedDark animate-pulse">
+            Loading Admin Panel...
+          </p>
+        </div>
+      }>
+        <AdminPanel
+          data={data}
+          setData={setData}
+          isDark={isDark}
+          toggleTheme={toggleTheme}
+          goBack={() => navigateTo("/")}
+        />
+      </Suspense>
     );
   }
 
@@ -112,7 +145,6 @@ export default function App() {
       setLang={setLang}
       isDark={isDark}
       toggleTheme={toggleTheme}
-      goAdmin={() => setPage("admin")}
     />
   );
 }

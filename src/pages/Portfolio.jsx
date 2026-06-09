@@ -9,7 +9,7 @@ import Contact from "../components/portfolio/Contact";
 import Footer from "../components/portfolio/Footer";
 import useScrollReveal from "../hooks/useScrollReveal";
 
-export function Portfolio({ data, isDark, toggleTheme, goAdmin, lang, setLang }) {
+export function Portfolio({ data, isDark, toggleTheme, lang, setLang }) {
   useScrollReveal();
 
   // Dynamically calculate statistics from the active arrays
@@ -28,7 +28,6 @@ export function Portfolio({ data, isDark, toggleTheme, goAdmin, lang, setLang })
         name={data.hero.name}
         isDark={isDark}
         toggleTheme={toggleTheme}
-        goAdmin={goAdmin}
         lang={lang}
         setLang={setLang}
       />

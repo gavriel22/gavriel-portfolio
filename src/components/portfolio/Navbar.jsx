@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getTranslation } from "../../utils/translations";
 
-export function Navbar({ name, isDark, toggleTheme, goAdmin, lang, setLang }) {
+export function Navbar({ name, isDark, toggleTheme, lang, setLang }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navLinks = ["about", "skills", "projects", "activities", "docs", "contact"];
 
@@ -23,6 +23,7 @@ export function Navbar({ name, isDark, toggleTheme, goAdmin, lang, setLang }) {
         ))}
       </ul>
       <div className="flex items-center gap-2.5">
+        {/* Language Switcher */}
         <button
           onClick={() => setLang(lang === "id" ? "en" : "id")}
           className="px-2.5 h-8 rounded-full border flex items-center justify-center text-[10px] font-bold tracking-wider transition-all border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-customText-mutedLight dark:text-customText-mutedDark hover:text-customText-light dark:hover:text-customText-dark cursor-pointer select-none"
@@ -38,14 +39,6 @@ export function Navbar({ name, isDark, toggleTheme, goAdmin, lang, setLang }) {
           title="Toggle Theme"
         >
           {isDark ? "🌙" : "☀️"}
-        </button>
-
-        {/* Admin Link */}
-        <button
-          onClick={goAdmin}
-          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all border-brand/40 text-brand dark:border-[#7ab84a]/40 dark:text-[#7ab84a] hover:bg-brand/10 dark:hover:bg-[#7ab84a]/10 cursor-pointer"
-        >
-          {getTranslation(lang, "navbar", "admin")}
         </button>
 
         {/* Mobile menu toggle */}
@@ -77,15 +70,6 @@ export function Navbar({ name, isDark, toggleTheme, goAdmin, lang, setLang }) {
               {getTranslation(lang, "navbar", n)}
             </a>
           ))}
-          <button
-            onClick={() => {
-              setMobileOpen(false);
-              goAdmin();
-            }}
-            className="text-left text-xs uppercase tracking-widest font-bold text-brand dark:text-[#7ab84a] cursor-pointer"
-          >
-            {getTranslation(lang, "navbar", "admin")}
-          </button>
         </div>
       )}
     </nav>
