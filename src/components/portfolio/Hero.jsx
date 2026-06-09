@@ -41,14 +41,14 @@ export function Hero({ hero, about, isDark, lang }) {
         </div>
       </div>
       
-      {/* Right Column: Foto Profil */}
+      {/* Right Column: Foto Profil Bulat */}
       <div className="lg:col-span-5 flex justify-center items-center order-1 lg:order-2 mb-6 lg:mb-0 z-10 anim-badge">
         {hero.profileImage ? (
-          <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[320px] md:h-[320px] rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 p-2.5 bg-white/5 dark:bg-white/5 backdrop-blur-[2px] transition-all duration-500 hover:scale-[1.02] shadow-sm">
+          <div className="relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] md:w-[280px] md:h-[280px] rounded-full overflow-hidden border-2 border-brand/25 dark:border-brand-dark/25 p-1 bg-white/5 dark:bg-white/5 backdrop-blur-[2px] transition-all duration-500 hover:scale-[1.02] shadow-md flex items-center justify-center">
             <img
               src={hero.profileImage}
               alt={hero.name}
-              className="w-full h-full object-cover rounded-xl"
+              className="w-full h-full object-cover rounded-full"
             />
           </div>
         ) : (
