@@ -1,5 +1,14 @@
 import { getTranslation } from "../../utils/translations";
 
+const ensureAbsoluteUrl = (url) => {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+};
+
 export function Projects({ projects, isDark, lang }) {
   if (!projects || projects.length === 0) {
     return (
@@ -29,7 +38,7 @@ export function Projects({ projects, isDark, lang }) {
           {projects.map((p, i) => (
             <a
               key={p.id || i}
-              href={p.url}
+              href={ensureAbsoluteUrl(p.url)}
               target="_blank"
               rel="noopener noreferrer"
               className="project-card block p-8 relative transition-colors bg-white hover:bg-[#f8f7f4] dark:bg-customBg-darkCard dark:hover:bg-[#1f201e]"

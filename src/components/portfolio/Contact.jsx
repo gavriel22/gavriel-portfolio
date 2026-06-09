@@ -1,5 +1,14 @@
 import { getTranslation } from "../../utils/translations";
 
+const ensureAbsoluteUrl = (url) => {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("mailto:")) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+};
+
 export function Contact({ contact, location, isDark, lang }) {
   const socialLinks = [
     {
@@ -11,14 +20,14 @@ export function Contact({ contact, location, isDark, lang }) {
     {
       icon: "💻",
       label: "GitHub",
-      val: contact.github ? contact.github.replace("https://", "") : "",
-      href: contact.github,
+      val: contact.github ? contact.github.replace("https://", "").replace("http://", "") : "",
+      href: ensureAbsoluteUrl(contact.github),
     },
     {
       icon: "🔗",
       label: "LinkedIn",
-      val: contact.linkedin ? contact.linkedin.replace("https://", "") : "",
-      href: contact.linkedin,
+      val: contact.linkedin ? contact.linkedin.replace("https://", "").replace("http://", "") : "",
+      href: ensureAbsoluteUrl(contact.linkedin),
     },
   ];
 
