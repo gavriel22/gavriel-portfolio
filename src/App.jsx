@@ -3,18 +3,18 @@ import Portfolio from "./pages/Portfolio";
 import { fetchPortfolioData } from "./utils/supabaseService";
 import { loadData } from "./utils/storage";
 
-// Lazy load AdminPanel to split code and reduce visitor bundle size
+// ─── New animation components ────────────────────────────────────────────────
+import { CustomCursor } from "./components/global/CustomCursor";
+import { SmoothScroll } from "./components/global/SmoothScroll";
+import { PageLoader } from "./components/global/PageLoader";
+
 const AdminPanel = lazy(() => import("./pages/AdminPanel"));
 
 export default function App() {
-  // Native pathname routing
-  const [page, setPage] = useState(() => {
-    return window.location.pathname === "/admin" ? "admin" : "portfolio";
-  });
-
-  // Initialize data with local storage cache instantly to prevent LCP blocking
+  const [page, setPage] = useState(() =>
+    window.location.pathname === "/admin" ? "admin" : "portfolio"
+  );
   const [data, setData] = useState(() => loadData());
-  
   const [lang, setLang] = useState(() => {
     try {
       const saved = localStorage.getItem("lang");
@@ -22,7 +22,6 @@ export default function App() {
     } catch {}
     return "id";
   });
-  
   const [isDark, setIsDark] = useState(() => {
     try {
       const saved = localStorage.getItem("theme");
@@ -31,22 +30,18 @@ export default function App() {
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
-  // Routing navigation helper without page reload
   const navigateTo = (path) => {
     window.history.pushState(null, "", path);
     setPage(path === "/admin" ? "admin" : "portfolio");
   };
 
-  // Sync routing state with browser back/forward buttons
   useEffect(() => {
-    const handlePopState = () => {
+    const handlePopState = () =>
       setPage(window.location.pathname === "/admin" ? "admin" : "portfolio");
-    };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Fetch latest data from database asynchronously in the background (SWR pattern)
   useEffect(() => {
     async function load() {
       try {
@@ -59,42 +54,28 @@ export default function App() {
     load();
   }, []);
 
-  // Sync lang state with localStorage
   useEffect(() => {
-    try {
-      localStorage.setItem("lang", lang);
-    } catch {}
+    try { localStorage.setItem("lang", lang); } catch {}
   }, [lang]);
 
-  // Track system preference theme changes
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (e) => {
-      // Only sync if user hasn't explicitly set a custom theme preference
-      if (!localStorage.getItem("theme")) {
-        setIsDark(e.matches);
-      }
+      if (!localStorage.getItem("theme")) setIsDark(e.matches);
     };
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // Sync isDark state with tailwind's dark class on <html> and localStorage
   useEffect(() => {
-    try {
-      localStorage.setItem("theme", isDark ? "dark" : "light");
-    } catch {}
-    
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    try { localStorage.setItem("theme", isDark ? "dark" : "light"); } catch {}
+    if (isDark) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
   }, [isDark]);
 
   const toggleTheme = () => setIsDark((d) => !d);
 
-  // Minimalist loader for the absolute first load when local storage cache is empty
+  // ── Minimalist first-load spinner (before local cache is ready) ──────────
   if (!data) {
     return (
       <div className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${
@@ -135,17 +116,27 @@ export default function App() {
     );
   }
 
-  // Kirimkan slice data yang aktif (id atau en) ke halaman utama portofolio
   const activeDataSlice = data?.[lang] || data?.id || data;
 
+  // ── Main render — CustomCursor sits outside SmoothScroll intentionally ──
   return (
-    <Portfolio
-      data={activeDataSlice}
-      lang={lang}
-      setLang={setLang}
-      isDark={isDark}
-      toggleTheme={toggleTheme}
-    />
+    <>
+      {/* Custom cursor — rendered above everything, no scroll wrapper needed */}
+      <CustomCursor />
+
+      {/* PageLoader wraps SmoothScroll + Portfolio so the slide-up exit
+          reveals the already-mounted page content beneath it */}
+      <PageLoader initials="GTN" isDark={isDark} minDelay={1400}>
+        <SmoothScroll>
+          <Portfolio
+            data={activeDataSlice}
+            lang={lang}
+            setLang={setLang}
+            isDark={isDark}
+            toggleTheme={toggleTheme}
+          />
+        </SmoothScroll>
+      </PageLoader>
+    </>
   );
 }
-

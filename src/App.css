@@ -182,3 +182,42 @@
     border-right-color: var(--border);
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ANIMATION ADDITIONS — paste into your main index.css / global CSS file
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Custom Cursor ──────────────────────────────────────────────────────────── */
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* Cursor accent color (matches your brand green) */
+:root {
+  --cursor-color: #5a9632;
+}
+.dark {
+  --cursor-color: #7ab84a;
+}
+
+/* ── Scroll indicator line (Hero) ───────────────────────────────────────────── */
+.scroll-line {
+  display: inline-block;
+  width: 32px;
+  height: 1px;
+}
+
+/* ── Respect reduced motion — disable ALL animations globally ────────────────
+   Framer Motion already checks useReducedMotion(), but this catches any
+   stray CSS transitions or keyframes you might add later.               */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
